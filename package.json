@@ -9,7 +9,9 @@
 	},
 	"keywords": ["distributed", "apiary", "service", "media", "pictures"],
 	"dependencies": {
-		"formidable": "1.0.x"
+		"connect": "1.5.x",
+		"connect-form": "0.2.x",
+		"connect-auth": "0.2.x"
 	},
 	"main": "./lib/mediastore",
 	"bin": {
