@@ -1,0 +1,20 @@
+{
+	"name": "mediastore",
+	"description": "MediaStore server on Apiary",
+	"version": "0.0.1",
+	"author": "Tolsma Telematica Consultancy <code at tolsma.net>, Sander Tolsma <sander at tolsma.net>",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/stolsma/mediastore"
+	},
+	"keywords": ["distributed", "apiary", "service", "media", "pictures"],
+	"dependencies": {
+		"formidable": "1.0.x"
+	},
+	"main": "./lib/mediastore",
+	"bin": {
+	},
+	"engines": {
+		"node": "0.4.x || 0.5.x"
+	}
+}
