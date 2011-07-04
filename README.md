@@ -1,6 +1,6 @@
 # MediaStore
 
-*A NodeJS MediaStore server to store media objects like movies and pictures*
+*Apiary MediaStore service to store media objects like movies and pictures*
 
 # What is MediaStore?
 
