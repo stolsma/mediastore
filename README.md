@@ -67,12 +67,12 @@ Some flows include additional steps, such as using refresh tokens to acquire new
 
 Here's the OAuth 2.0 scope information for the MediaStore API:
 
-* `public` for public read access to the MediaStore (default).
-* `comment` to have comment add and edit capability.
-* `read` for private read access to the MediaStore service.
-* `write` for private write access to the specific user store location.
-* `admin` for total access to the MediaStore service except for `user` authorization.
-* `user` for user `admin` auhorization setting
+* `public` for public read access to the MediaStore (default and always set for everyone, can not be set with the user API).
+* `comment` to have comment add, delete and edit (always own comments!) capability.
+* `read` for private album read access to the MediaStore service.
+* `write` for private write access to the specific user  "drop box" store location.
+* `admin` for full access (read, write, delete) to the MediaStore service except for `superuser` authorization.
+* `superuser` for scope `admin` and  `superuser` auhorization setting
 (to be extended)  
 
 To request access using OAuth 2.0, your application needs the scope information, as well as information that the MediaStore service supplies during client application registration (such as the client ID and/or the client secret).
@@ -341,9 +341,51 @@ The binary store xx can be retrieved by calling (`admin` authorization is needed
 It will return the items 
 
 
-## User authorization manipulation
+## Working with User authorizations
 
 (to be filled)
+
+At a minimum `admin` scope authorization plus sometimes `superuser` scope authorization is needed for the following API calls.
+
+
+### User addition
+
+(to be filled)
+
+'POST https://[MediaStore hostname]/data/@me/user'
+
+
+### User data update
+
+Makes it possible to update user information and to set user scope authorization. The `admin` and `superuser` scope authorization can only be set by a user with `superuser` authorization
+
+````
+PUT https://[MediaStore hostname]/data/@me/user/:UserID
+
+{
+	"name": "User Example",
+	"description": "A description of the user",
+	"openid": "user@example.com",
+	"openidatt" : {
+		... all retrieved OpenID Connect attributes ...
+	},
+	"scope": [
+		"public",
+		"comment",
+		"read",
+		"write",
+		"admin",
+		"superuser"
+	]
+}
+````
+
+
+### 'Deleting' a user
+
+Removes all scope authorizations except for "public" from a user's scope authentication attribute. Comments can't be changed and the user "drop box" stay available but can't be seen by the user anymore.
+
+`DELETE https://[MediaStore hostname]/data/@me/user/:UserID`
 
 
 Documentation License
