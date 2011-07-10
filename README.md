@@ -120,6 +120,12 @@ If `:ParentAlbumID` is not given then the album will be created in the root albu
 
 If your request fails for some reason, then a different status code may be returned. For information about the status codes used by the API, see the HTTP status codes section.
 
+Answer:
+````
+{
+}
+````
+
 
 ### Modifying the properties of an album
 
@@ -129,6 +135,12 @@ After retrieving an album entry (identified by `:AlbumID`), you can modify it by
 PUT https://[MediaStore hostname]/data/@me/album/:AlbumID
 ````
 
+Answer:
+````
+{
+}
+````
+
 
 ### Deleting an album
 
@@ -136,6 +148,12 @@ You can delete an album (identified by `:AlbumID`) by sending an `admin` authent
 
 ````
 DELETE https://[MediaStore hostname]/data/@me/album/:AlbumID
+````
+
+Answer:
+````
+{
+}
 ````
 
 
@@ -156,6 +174,8 @@ To get a listing all of the media items in an album with the id ':AlbumID', send
 
 Note: The string `@me` can be replaced by a real userID, in which case the server returns the album view of the given userID. This is only applicable to authenticated users with `admin` access.
 Note: The entries in an answer are ordered based upon the item's display order attribute.
+
+Answer:
 
 ````
 {
@@ -183,6 +203,12 @@ Note: The entries in an answer are ordered based upon the item's display order a
 It is also possible to retrieve the last `:Number` media items uploaded:
 
 'GET https://[MediaStore hostname]/data/item/last/:Number'
+
+Answer:
+````
+{
+}
+````
 
 
 ### Changing a media items or posting a new media item
@@ -264,6 +290,12 @@ Content-Type: image/jpeg
 
 Note that the '' element contains the filename you want to use for the image.
 
+Answer:
+````
+{
+}
+````
+
 
 #### Posting a media item without metadata
 
@@ -282,6 +314,12 @@ Content-Length: 47899
 
 Note: If you want to post a media item without being `admin` authenticated but you are `write` authenticated, you can post the media item to the authenticated user's "Drop Box." This special store location will automatically be created the first time it is used to store a media item. To post to the Drop Box, use an empty `:StorePath` value.
 
+Answer:
+````
+{
+}
+````
+
 
 #### Updating a media item and its metadata
 
@@ -295,6 +333,12 @@ Note: With PUT, you can't do a partial update of an entry; you have to send the 
 
 In order to make other types partial updates, you must use PATCH. See the section on partial updates for details.
 
+Answer:
+````
+{
+}
+````
+
 
 #### Updating only the binary data
 
@@ -303,6 +347,12 @@ To replace only the media item's binary data (identified by `:ItemID`), use the 
 'PUT https://[MediaStore hostname]/data/@me/item/:ItemID'
 
 In the body of the PUT, include the replacement image data, in the same format that you used to do the POST without metadata.
+
+Answer:
+````
+{
+}
+````
 
 
 #### Updating only the metadata
@@ -317,6 +367,12 @@ In the body of the PUT, provide the updated metadata, in the form of a JSON obje
 
 The media item's binary data itself is not re-sent to the server.
 
+Answer:
+````
+{
+}
+````
+
 
 ### Deleting a media item
 
@@ -325,6 +381,12 @@ To delete a media item and its metadata, send an HTTP DELETE request. The media 
 For example, to delete the media item from the previous examples:
 
 'DELETE https://[MediaStore hostname]/data/@me/item/:ItemID'
+
+Answer:
+````
+{
+}
+````
 
 
 ## Working with the binary store
@@ -340,6 +402,12 @@ The binary store xx can be retrieved by calling (`admin` authorization is needed
 
 It will return the items 
 
+Answer:
+````
+{
+}
+````
+
 
 ## Working with User authorizations
 
@@ -348,21 +416,17 @@ It will return the items
 At a minimum `admin` scope authorization plus sometimes `superuser` scope authorization is needed for the following API calls.
 
 
-### User addition
+### User data retrieval
 
 (to be filled)
 
-'POST https://[MediaStore hostname]/data/@me/user'
+`GET https://[MediaStore hostname]/data/user/:UserID`
 
-
-### User data update
-
-Makes it possible to update user information and to set user scope authorization. The `admin` and `superuser` scope authorization can only be set by a user with `superuser` authorization
+Answer:
 
 ````
-PUT https://[MediaStore hostname]/data/@me/user/:UserID
-
 {
+	"id": "724KJDLLKD98243",
 	"name": "User Example",
 	"description": "A description of the user",
 	"openid": "user@example.com",
@@ -380,12 +444,79 @@ PUT https://[MediaStore hostname]/data/@me/user/:UserID
 }
 ````
 
+Answer:
+````
+{
+}
+````
+
+### User addition
+
+(to be filled)
+
+````
+POST https://[MediaStore hostname]/data/user
+
+{
+	"name": "User Example",
+	"description": "A description of the user",
+	"openid": "user@example.com",
+	"scope": [
+		"public",
+		"comment",
+		"read",
+		"write",
+		"admin",
+		"superuser"
+	]
+}
+````
+
+Answer:
+````
+{
+}
+````
+
+### User data update
+
+Makes it possible to update user information and to set user scope authorization. The `admin` and `superuser` scope authorization can only be set by a user with `superuser` authorization
+
+````
+PUT https://[MediaStore hostname]/data/user/:UserID
+
+{
+	"name": "User Example",
+	"description": "A description of the user",
+	"openid": "user@example.com",
+	"scope": [
+		"public",
+		"comment",
+		"read",
+		"write",
+		"admin",
+		"superuser"
+	]
+}
+````
+
+Answer:
+````
+{
+}
+````
 
 ### 'Deleting' a user
 
 Removes all scope authorizations except for "public" from a user's scope authentication attribute. Comments can't be changed and the user "drop box" stay available but can't be seen by the user anymore.
 
-`DELETE https://[MediaStore hostname]/data/@me/user/:UserID`
+`DELETE https://[MediaStore hostname]/data/user/:UserID`
+
+Answer:
+````
+{
+}
+````
 
 
 Documentation License
