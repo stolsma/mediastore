@@ -170,7 +170,9 @@ There are different ways to retrieve media items. The most common is to get a li
 
 To get a listing all of the media items in an album with the id ':AlbumID', send an HTTP request like the following to the MediaStore service:
 
-`GET https://[MediaStore hostname]/data/@me/item/album/:AlbumID`
+````
+GET https://[MediaStore hostname]/data/@me/item/album/:AlbumID
+````
 
 Note: The string `@me` can be replaced by a real userID, in which case the server returns the album view of the given userID. This is only applicable to authenticated users with `admin` access.
 Note: The entries in an answer are ordered based upon the item's display order attribute.
@@ -202,9 +204,12 @@ Answer:
 
 It is also possible to retrieve the last `:Number` media items uploaded:
 
-'GET https://[MediaStore hostname]/data/item/last/:Number'
+````
+GET https://[MediaStore hostname]/data/item/last/:Number
+````
 
 Answer:
+
 ````
 {
 }
@@ -266,7 +271,9 @@ You can download original media item files. Use the
 
 To send metadata along with the media item, post to the following URL:
 
-'https://[MediaStore hostname]/data/@me/item/:StorePath'
+````
+https://[MediaStore hostname]/data/@me/item/:StorePath
+````
 
 And use the following format for the body of the POST:
 
@@ -291,6 +298,7 @@ Content-Type: image/jpeg
 Note that the '' element contains the filename you want to use for the image.
 
 Answer:
+
 ````
 {
 }
@@ -301,7 +309,9 @@ Answer:
 
 To send a media item without its associated metadata, post to the following URL:
 
-'https://[MediaStore hostname]/data/@me/item/:StorePath`
+````
+https://[MediaStore hostname]/data/@me/item/:StorePath
+````
 
 And use the following format for the body of the POST:
 
@@ -315,6 +325,7 @@ Content-Length: 47899
 Note: If you want to post a media item without being `admin` authenticated but you are `write` authenticated, you can post the media item to the authenticated user's "Drop Box." This special store location will automatically be created the first time it is used to store a media item. To post to the Drop Box, use an empty `:StorePath` value.
 
 Answer:
+
 ````
 {
 }
@@ -325,7 +336,9 @@ Answer:
 
 To replace both the binary data and metadata for the media item (identified by `:ItemID`) that you inserted earlier, use an HTTP request like the following:
 
-'PUT https://[MediaStore hostname]/data/@me/item/:ItemID'
+````
+PUT https://[MediaStore hostname]/data/@me/item/:ItemID
+````
 
 In the body of the PUT, include the updated metadata and media item data, in the same multipart format that you used to do the POST with metadata.
 
@@ -334,6 +347,7 @@ Note: With PUT, you can't do a partial update of an entry; you have to send the 
 In order to make other types partial updates, you must use PATCH. See the section on partial updates for details.
 
 Answer:
+
 ````
 {
 }
@@ -344,11 +358,14 @@ Answer:
 
 To replace only the media item's binary data (identified by `:ItemID`), use the following HTTP request:
 
-'PUT https://[MediaStore hostname]/data/@me/item/:ItemID'
+````
+PUT https://[MediaStore hostname]/data/@me/item/:ItemID
+````
 
 In the body of the PUT, include the replacement image data, in the same format that you used to do the POST without metadata.
 
 Answer:
+
 ````
 {
 }
@@ -361,13 +378,16 @@ To replace only the media item's (identified by `:ItemID`) metadata (and not the
 
 In particular, send the following HTTP request:
 
-'PUT https://[MediaStore hostname]/data/@me/item/:ItemID'
+````
+PUT https://[MediaStore hostname]/data/@me/item/:ItemID
+````
 
 In the body of the PUT, provide the updated metadata, in the form of a JSON object containing image metadata.
 
 The media item's binary data itself is not re-sent to the server.
 
 Answer:
+
 ````
 {
 }
@@ -380,9 +400,12 @@ To delete a media item and its metadata, send an HTTP DELETE request. The media 
 
 For example, to delete the media item from the previous examples:
 
-'DELETE https://[MediaStore hostname]/data/@me/item/:ItemID'
+````
+DELETE https://[MediaStore hostname]/data/@me/item/:ItemID
+````
 
 Answer:
+
 ````
 {
 }
@@ -398,11 +421,14 @@ Answer:
 
 The binary store xx can be retrieved by calling (`admin` authorization is needed for the full store, `write` authorization) :
 
-`GET https://[MediaStore hostname]/data/@me/store/:StorePath`
+````
+GET https://[MediaStore hostname]/data/@me/store/:StorePath`
+````
 
 It will return the items 
 
 Answer:
+
 ````
 {
 }
@@ -420,7 +446,9 @@ At a minimum `admin` scope authorization plus sometimes `superuser` scope author
 
 (to be filled)
 
-`GET https://[MediaStore hostname]/data/user/:UserID`
+````
+GET https://[MediaStore hostname]/data/user/:UserID
+````
 
 Answer:
 
@@ -445,6 +473,7 @@ Answer:
 ````
 
 Answer:
+
 ````
 {
 }
@@ -473,6 +502,7 @@ POST https://[MediaStore hostname]/data/user
 ````
 
 Answer:
+
 ````
 {
 }
@@ -501,6 +531,7 @@ PUT https://[MediaStore hostname]/data/user/:UserID
 ````
 
 Answer:
+
 ````
 {
 }
@@ -510,9 +541,12 @@ Answer:
 
 Removes all scope authorizations except for "public" from a user's scope authentication attribute. Comments can't be changed and the user "drop box" stay available but can't be seen by the user anymore.
 
-`DELETE https://[MediaStore hostname]/data/user/:UserID`
+````
+DELETE https://[MediaStore hostname]/data/user/:UserID
+````
 
 Answer:
+
 ````
 {
 }
