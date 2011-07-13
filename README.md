@@ -1,10 +1,10 @@
 # MediaStore
 
-*Apiary MediaStore service to store media objects like movies and pictures*
+*Apiary MediaStore service to store media objects like video and photos*
 
 # What is MediaStore?
 
-MediaStore is an open-source project that uses [node.js](http://nodejs.org) and Open Source Packages to store media objects like movies and pictures and has a defined REST interface for interaction. 
+MediaStore is an open-source project that uses [node.js](http://nodejs.org) and Open Source Packages to store media objects like video and photos and has a defined REST interface for interaction. 
 
 # How does it work?
 
@@ -12,116 +12,170 @@ TODO
 
 ## Where can I run MediaStore?
 
-TODO
+MediaStore can be run as a service in a [Apiary](http://code.tolsma.net/apiary) environment or as a standalone NodeJS service. 
 
-# Installation (to be implemented)
+# Installation
 
-MediaStore can be run as a service by Apiary.
+Read the Apiary Application Installation guide for installation on an Apiary environment.
+
+If you want MediaStore to be used standalone with NodeJS, you can install using NPM or get the code from github at [git://github.com/stolsma/mediastore.git](https://github.com/stolsma/mediastore).
+ 
+Get MediaStore from NPM with:
+`npm install mediastore`
+
+Get MediaStore from GitHub and then install the start scripts and all needed packages with:
+
+````
+git clone git://github.com/stolsma/mediastore.git
+cd mediastore
+npm install
+````
+
+To run, an appconfig.json file needs to be created in the root location of the code (i.e. where the package.json file for MediaStore resides).
+
+The following attributes need to be defined in the `appconfig.json` file:
+
+````
+{
+	"address": "localhost",					// ip address or hostname to run on. (localhost is default)
+	"port": 8000,							// port number to run on. (8000 is default)
+	"dbtype": "mysql",						// Database backend type. At this moment MySQL and ... are supported. (mysql is default)
+	"dblocation": "localhost:4000",			// Location of the database. (localhost:4000 is default)
+	"dbuser": "aUsername",					// Database user name. (required)
+	"dbpassword": "aPassword",				// Database user password. (required)
+	"owner": "user@example.com"				// OpenID connect Identification of the owner of this MediaStore. (required)
+}
+````
+
+Then run with:
+`mediastore`
+
 
 # Documentation
 
 MediaStore documentation is still very much a work in progress. We'll be actively updating the documentation in the upcoming months to make it easier to get acclimated with `MediaStore`.
 
-# An overview of using MediaStore
+# An overview of using the standard MediaStore web application
 
-## Starting up a MediaStore environment
+Connect to the MediaStore service webinterface by going to `https://localhost:8000` with your web browser.
 
-(to be described)
+(to be further described)
 
-The Mediastore service is intended to be run in a [Apiary](http://code.tolsma.net/apiary) environment although standalone installation (with some static configuration file editing) can be done too.
 
 # MediaStore API
 
-A MediaStore service allows client applications to view and update albums, media, and comments in the form of JSON REST API calls. Your client application can use the MediaStore API to create new albums, upload media, add comments, edit or delete existing albums, media, and comments, and query for items that match particular criteria.
+A MediaStore service allows third party client applications to view and update albums, media, and comments in the form of JSON REST API calls. Your client application can use the MediaStore API to create new albums, upload media, add comments, edit or delete existing albums, media, and comments, and query for items that match particular criteria.
 
 This chapter is intended for programmers who want to write client applications that can interact with MediaStore services. It provides a series of examples of basic Data API interactions using raw JSON/HTTP, with explanations. After reading this chapter, you can learn more about interacting with the API by reading the language-specific examples found on the other sections of this document.
 
 
-## Authorization
+## Authentication and Authorization
 
 When your application requests non-public MediaStore data, it must include an authorization token. The token also identifies your application to the MediaStore.
 
+### About Authentication and Authorization
 
-### About authorization
-
-Before your application can get access to data from a MediaStore service, the application must request authorization from the MediaStore service. OpenID Connect + OAuth 2.0 are the authorization protocols required for that.
+Before your application can get access to data from a MediaStore service, the application must request authorization from the MediaStore service. OpenID Connect + OAuth 2.0 are the authentication and authorization protocols required for that.
 
 
-### Authorizing requests with OpenID Connect + OAuth 2.0
+### Authenticating and Authorizing requests with OpenID Connect + OAuth 2.0
 
-Requests to the MediaStore Service API for non-public user data must be authorized by the owner of the MediaStore service. He will grant access to certain Albums or Media items by adding OpenID identifiers (see authorizing Albums/Items chapter). By using OpenID Connect Authentication the MediaStore Service knows what data can be served to the requesting Client.
+Requests to the MediaStore Service API for non-public user data must be authorized by the owner of the MediaStore service. He will grant access to certain Albums or Media items by adding OpenID identifiers (see authorizing Albums/Items chapter). By using OpenID Connect Authentication + OAuth 2.0 Authorization, the MediaStore Service knows what data can be served to the requesting Client.
 
-The details of the authorization process, or "flow," for OpenID Connect / OAuth 2.0 vary somewhat depending on what kind of application you're writing. The following general process applies to all application types:
+The details of the authentication and authorization process, or "flow," for OpenID Connect / OAuth 2.0 vary somewhat depending on what kind of application you're writing. The following general process applies to all application types:
 
-1. First your client needs to register with the specific MediaStore sevice at the MediaStore Client Registration endpoint. the MediaStore service then provides information you'll need later, such as a client ID and a client secret.
+1. First your client needs to register with the specific MediaStore sevice at the MediaStore Client Registration endpoint. The MediaStore service then provides information you'll need later, such as a client ID and a client secret.
 2. When your client application needs access to the MediaStore data, it asks for an authentication code at the MediaStore Authentication endpoint. 
 3. MediaStore displays an OAuth dialog to the user of your client application, asking them to authenticate themselves with an OpenID Connect account. 
 4. If the user is not yet logged in with their OpenID Connect provider it needs to login at their OpenID Connect provider.
-5. The MediaStore service gets user authentication confirmation of the OpenID Connect provider and then asks for authorization of your client application to request some of the user's data.
-6. If the user approves, then the MediaStore service gives your application a short-lived Authentication token.
+5. The MediaStore service gets user authentication confirmation of the OpenID Connect provider and then asks for authorization of requested scopes your client application requires to access the MediaStore service's API.
+6. If the user approves the scopes, then the MediaStore service gives your application a short-lived Authentication Token and a list of authorized scopes.
 7. This Authentication Token needs to be changed for a Refresh and Access token at the MediaStore Token endpoint
 8. Your application requests MediaStore data, attaching the access token to the request.
-9. If the MediaStore service determines that your request and the token are valid, it returns the requested data.
+9. If the MediaStore service determines that your request and the token are valid, it returns the requested data or executes the requested action.
 
-Some flows include additional steps, such as using refresh tokens to acquire new access tokens. For detailed information about flows for various types of applications, see Google's OAuth 2.0 documentation.
+Some flows include additional steps, such as using refresh tokens to acquire new access tokens. For detailed information about flows for various types of applications, see the OAuth 2.0 documentation.
 
 Here's the OAuth 2.0 scope information for the MediaStore API:
 
-* `public` for public read access to the MediaStore (default and always set for everyone, can not be set with the user API).
-* `comment` to have comment add, delete and edit (always own comments!) capability.
-* `read` for private album read access to the MediaStore service.
-* `write` for private write access to the specific user  "drop box" store location.
+* `public` for public read access to the MediaStore (default and always set for everyone, can not be set with the API).
+* `comment` to have comment add, delete and edit (always on own comments!) capability.
+* `private` for private album read access capability. 
+* `write` for private read/write access to the authenticated user's "drop box" store location.
 * `admin` for full access (read, write, delete) to the MediaStore service except for `superuser` authorization.
-* `superuser` for scope `admin` and  `superuser` auhorization setting
+* `superuser` for scope `admin` and `superuser` user auhorization setting.
 (to be extended)  
 
-To request access using OAuth 2.0, your application needs the scope information, as well as information that the MediaStore service supplies during client application registration (such as the client ID and/or the client secret).
+To request access using OAuth 2.0, your application needs the required scopes, as well as information that the MediaStore service supplies during client application registration (such as the client ID and/or the client secret).
 
 
 ## Working with albums
 
-Albums are the way MediaStore groups media items into useful sets. These albums can be `public`, `select` or `private`, and have their own properties such as a geographic location, a description, or a date.
+Albums are the way MediaStore groups media items into useful sets. These albums can have an effective user scope of `public` or `private`, and have their own properties such as a geographic location, a description, or a date.
 
-You do not have to authenticate to retrieve data about `public` albums, but in order to retrieve data about `select` albums you must be authenticated. To create, update, or delete albums you must have 'admin' scope authentication as discussed in the authentication section.
+The client does not have to authenticate to retrieve data about `public` scoped albums, but in order to retrieve data about `private` albums the client must be authenticated and authorized for that specific album with `private` or `admin` scope. To create, update, or delete albums the client must have 'admin' scope authorization as discussed in the authentication section.
 
 ### Requesting a list of albums
+
+Authentication scope: `public`, `private` or `admin`
 
 To get a listing of all of the albums accessible to public or authenticated users, send an HTTP request like the following to the MediaStore API:
 
 ````
-GET https://[MediaStore hostname]/data/@me/album/:AlbumID
+GET https://[MediaStore hostname]/data/@me/album/:albumId
 ````
 
-If `:AlbumID` is not given then all albums of the authenticated user's root will be given.
+If `:albumId` is not given then all albums of the authenticated user's root, or the public root will be given. The server returns a feed of album entries, see the album attributes section for a detailled description.
 
-Note: The string `@me` can be replaced by a real userID, in which case the server returns the album view of the given userID. This is only applicable to authenticated users with `admin` access.
-
-The server returns a feed of album entries, which looks similar to the following:
+Note: The string `@me` can be replaced by a userId, in which case the server returns the album view of the given userID. This is only applicable to authenticated users with `admin` scope access.
 
 ````
-[example]
-````
+GET /data/@me/album/:albumId HTTP/1.1
+Host: www.mediastore.com
+Accept: application/json
 
-
-### Creating an album
-
-You can create an album in a parent album identified by `:ParentAlbumID`, by sending an `admin` authenticated POST request with an appropriately formed entry. To authenticate, use the authentication mechanism discussed in the Authentication section.
-
-````
-POST https://[MediaStore hostname]/data/@me/album/:ParentAlbumID
+HTTP/1.1 200 O.K.
+Content-Type: application/json
 
 {
 }
 ````
 
+
+### Creating an album
+
+Authentication scope: `admin`
+
+You can create an album in a parent album identified by `:parentAlbumID`, by sending a POST request with an appropriately formed entry.
+
+````
+POST https://[MediaStore hostname]/data/@me/album/:parentAlbumId
+````
+
 MediaStore creates a new album using the data you sent, then returns an HTTP 201 status code, along with a copy of the new album in the form of an JSON response. The returned entry is similar to the one you sent, but the returned one contains various elements added by the server, such as an `id` element.
 
-If `:ParentAlbumID` is not given then the album will be created in the root album.
+If `:parentAlbumId` is not given then the album will be created in the root album.
 
 If your request fails for some reason, then a different status code may be returned. For information about the status codes used by the API, see the HTTP status codes section.
 
 Answer:
+
 ````
+{
+}
+````
+
+Example:
+
+````
+POST /data/@me/album/6478HDJS3738JSKS
+Host: www.mediastore.com
+Accept: application/json
+
+HTTP/1.1 201 Created
+Content-Type: application/json
+Cache-Control: no-store
+
 {
 }
 ````
@@ -129,10 +183,14 @@ Answer:
 
 ### Modifying the properties of an album
 
-After retrieving an album entry (identified by `:AlbumID`), you can modify it by sending an `admin` authenticated PUT request, containing the new album data:
+Authentication scope: `admin`
+
+Possible actions:
+1. After retrieving an album entry (identified by `:albumId`), you can modify it by sending a PUT request, containing the new album data
+2. If @me is a user id then effective `read` permission for that user, for that album will be set (i.e. the album will be accessible for that user).
 
 ````
-PUT https://[MediaStore hostname]/data/@me/album/:AlbumID
+PUT https://[MediaStore hostname]/data/@me/album/:albumId
 ````
 
 Answer:
@@ -144,10 +202,14 @@ Answer:
 
 ### Deleting an album
 
-You can delete an album (identified by `:AlbumID`) by sending an `admin` authenticated HTTP DELETE request:
+Authentication scope: `admin`
+
+Possible actions:
+1. You can delete a defined album (identified by `:albumID`) + related media item relations.
+2. If @me is a user id then effective `read` permission for that user, for that album will be revoked (i.e. the album will not be accessible for that user anymore).
 
 ````
-DELETE https://[MediaStore hostname]/data/@me/album/:AlbumID
+DELETE https://[MediaStore hostname]/data/@me/album/:albumID
 ````
 
 Answer:
@@ -551,6 +613,23 @@ Answer:
 {
 }
 ````
+
+## HTTP status codes
+
+The following table describes what various HTTP status codes mean in the context of the API.
+
+Code 	                    Explanation
+200 OK 	                    No error.
+201 CREATED                 Creation of a resource was successful.
+304 NOT MODIFIED            The resource hasn't changed since the time specified in the request's If-Modified-Since header.
+400 BAD REQUEST             Invalid request URI or header, or unsupported nonstandard parameter.
+401 UNAUTHORIZED            Authorization required.
+403 FORBIDDEN               Unsupported standard parameter, or authentication or authorization failed.
+404 NOT FOUND               Resource (such as a feed or entry) not found.
+409 CONFLICT                Specified version number doesn't match resource's latest version number.
+410 GONE                    Requested change history is no longer available on the server. Refer to service-specific documentation for more details.
+500 INTERNAL SERVER ERROR   Internal error. This is the default code that is used for all unrecognized server errors.
+
 
 
 Documentation License
