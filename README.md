@@ -2,11 +2,11 @@
 
 *Apiary MediaStore service to store media objects like video and photos*
 
-# What is MediaStore?
+## What is MediaStore?
 
 MediaStore is an open-source project that uses [node.js](http://nodejs.org) and Open Source Packages to store media objects like video and photos and has a defined REST interface for interaction. 
 
-# How does it work?
+## How does it work?
 
 TODO
 
@@ -14,16 +14,23 @@ TODO
 
 MediaStore can be run as a service in a [Apiary](http://code.tolsma.net/apiary) environment or as a standalone NodeJS service. 
 
-# Installation
+## Installation
+
+### Apiary
 
 Read the Apiary Application Installation guide for installation on an Apiary environment.
+
+### Standalone on NodeJS
 
 If you want MediaStore to be used standalone with NodeJS, you can install using NPM or get the code from github at [git://github.com/stolsma/mediastore.git](https://github.com/stolsma/mediastore).
  
 Get MediaStore from NPM with:
-`npm install mediastore`
 
-Get MediaStore from GitHub and then install the start scripts and all needed packages with:
+````
+npm install mediastore
+````
+
+Or get MediaStore from GitHub and then install the start scripts and all needed packages with:
 
 ````
 git clone git://github.com/stolsma/mediastore.git
@@ -37,25 +44,31 @@ The following attributes need to be defined in the `appconfig.json` file:
 
 ````
 {
-	"address": "localhost",					// ip address or hostname to run on. (localhost is default)
-	"port": 8000,							// port number to run on. (8000 is default)
-	"dbtype": "mysql",						// Database backend type. At this moment MySQL and ... are supported. (mysql is default)
-	"dblocation": "localhost:4000",			// Location of the database. (localhost:4000 is default)
+	"address": "localhost",					// ip address or hostname to run mediastore on. (localhost is default)
+	"port": 8000,							// port number to run mediastore on. (8000 is default)
+	"dbtype": "mysql",						// Database backend type. At this moment MySQL and PostgreSQL (in development)
+											// are supported. (mysql is default)
+	"dbhost": "localhost",					// Host of the database. (localhost is default)
+	"dbport": 3306,							// Port number of the database. (3306 is default)
+	"dbdatabase": "mediastore",				// Name of the database to use (mediastore is default)
 	"dbuser": "aUsername",					// Database user name. (required)
 	"dbpassword": "aPassword",				// Database user password. (required)
 	"owner": "user@example.com"				// OpenID connect Identification of the owner of this MediaStore. (required)
 }
 ````
 
-Then run with:
-`mediastore`
+Then run MediaStore with:
+
+````
+mediastore
+````
 
 
-# Documentation
+# User Documentation
 
-MediaStore documentation is still very much a work in progress. We'll be actively updating the documentation in the upcoming months to make it easier to get acclimated with `MediaStore`.
+MediaStore user documentation is still very much a work in progress. We'll be actively updating the documentation in the upcoming months to make it easier to get acclimated with `MediaStore`.
 
-# An overview of using the standard MediaStore web application
+## An overview of using the standard MediaStore web application
 
 Connect to the MediaStore service webinterface by going to `https://localhost:8000` with your web browser.
 
@@ -104,7 +117,8 @@ Here's the OAuth 2.0 scope information for the MediaStore API:
 * `write` for private read/write access to the authenticated user's "drop box" store location.
 * `admin` for full access (read, write, delete) to the MediaStore service except for `superuser` authorization.
 * `superuser` for scope `admin` and `superuser` user auhorization setting.
-(to be extended)  
+
+(to be extended)
 
 To request access using OAuth 2.0, your application needs the required scopes, as well as information that the MediaStore service supplies during client application registration (such as the client ID and/or the client secret).
 
@@ -113,7 +127,7 @@ To request access using OAuth 2.0, your application needs the required scopes, a
 
 Albums are the way MediaStore groups media items into useful sets. These albums can have an effective user scope of `public` or `private`, and have their own properties such as a geographic location, a description, or a date.
 
-The client does not have to authenticate to retrieve data about `public` scoped albums, but in order to retrieve data about `private` albums the client must be authenticated and authorized for that specific album with `private` or `admin` scope. To create, update, or delete albums the client must have 'admin' scope authorization as discussed in the authentication section.
+The client does not have to authenticate to retrieve data about `public` scoped albums, but in order to retrieve data about `private` albums the client must be authenticated and authorized for that specific album with `private` or `admin` scope. To create, update, or delete albums the client must have `admin` scope authorization as discussed in the authentication section.
 
 ### Requesting a list of albums
 
@@ -127,17 +141,46 @@ GET https://[MediaStore hostname]/data/@me/album/:albumId
 
 If `:albumId` is not given then all albums of the authenticated user's root, or the public root will be given. The server returns a feed of album entries, see the album attributes section for a detailled description.
 
-Note: The string `@me` can be replaced by a userId, in which case the server returns the album view of the given userID. This is only applicable to authenticated users with `admin` scope access.
+Notes:
+
+* The string `@me` can be replaced by a userId, in which case the server returns the album view of the given userID. This is only applicable to authenticated users with `admin` scope access.
+* The returned `users` field will only be applicable to `private` scoped albums together with `admin` scope authenticated access.
+
+Non normative example:
 
 ````
-GET /data/@me/album/:albumId HTTP/1.1
+GET /data/@me/album/6478HDJS3738JSKS HTTP/1.1
 Host: www.mediastore.com
 Accept: application/json
 
-HTTP/1.1 200 O.K.
+HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
+	"albums": [{
+		"link": "www.mediastore.com/data/@me/album/834935DJHDWU2374234",
+		"id": "834935DJHDWU2374234",
+		"parent": "6478HDJS3738JSKS",
+		"name": "Test Album"
+		"description": "test description",
+		"createdate": "",
+		"scope": "public"
+	}, {
+		"link": "www.mediastore.com/data/@me/album/423423JKHAF98548524",
+		"id": "423423JKHAF98548524",
+		"parent": "6478HDJS3738JSKS",
+		"name": "Test Album2"
+		"description": "test description",
+		"createdate": "",
+		"scope": "private",
+		"users": [{
+			"id": "724KJDLLKD98243",
+			"user@example.com"
+		},{
+			"id": "1345HDJDJSKSK34",
+			"test.example.com"
+		}]
+	}]
 }
 ````
 
@@ -162,21 +205,40 @@ Answer:
 
 ````
 {
+	"link": "...Link to this resource...",
+	"id": "...Assigned Id of the created album...",
+	"parent": "...Album parent Id of the created album...",
+	"name": "...Name of the album..."
+	"description": "...Description of the album...",
+	"createdate": "...created time and date..."
 }
 ````
 
-Example:
+Non normative example:
 
 ````
 POST /data/@me/album/6478HDJS3738JSKS
 Host: www.mediastore.com
 Accept: application/json
 
+{
+	"name": "Test Album",
+	"description": "test description",
+	"scope": "public"
+}
+
 HTTP/1.1 201 Created
 Content-Type: application/json
 Cache-Control: no-store
 
 {
+	"link": "www.mediastore.com/data/@me/album/834935DJHDWU2374234",
+	"id": "834935DJHDWU2374234",
+	"parent": "6478HDJS3738JSKS",
+	"name": "Test Album"
+	"description": "test description",
+	"createdate": "",
+	"scope": "public"
 }
 ````
 
@@ -186,6 +248,7 @@ Cache-Control: no-store
 Authentication scope: `admin`
 
 Possible actions:
+
 1. After retrieving an album entry (identified by `:albumId`), you can modify it by sending a PUT request, containing the new album data
 2. If @me is a user id then effective `read` permission for that user, for that album will be set (i.e. the album will be accessible for that user).
 
@@ -196,6 +259,71 @@ PUT https://[MediaStore hostname]/data/@me/album/:albumId
 Answer:
 ````
 {
+	"link": "...Link to this resource...",
+	"id": "...Assigned Id of the created album...",
+	"parent": "...Album parent Id of the created album...",
+	"name": "...Name of the album..."
+	"description": "...Description of the album...",
+	"createdate": "...created time and date...",
+	"scope": "...Authentication level needed (public or private)..."
+	"users": [
+		... user objects if album has private scope...
+	]
+}
+````
+
+Non normative examples:
+
+````
+PUT /data/@me/album/834935DJHDWU2374234
+Host: www.mediastore.com
+Accept: application/json
+
+{
+	"name": "Test Album",
+	"description": "test description",
+	"scope": "public"
+}
+
+HTTP/1.1 201 Created
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+	"link": "www.mediastore.com/data/@me/album/834935DJHDWU2374234",
+	"id": "834935DJHDWU2374234",
+	"parent": "6478HDJS3738JSKS",
+	"name": "Test Album"
+	"description": "test description",
+	"createdate": "",
+	"scope": "public"
+}
+````
+
+````
+PUT /data/724KJDLLKD98243/album/423423JKHAF98548524
+Host: www.mediastore.com
+Accept: application/json
+
+HTTP/1.1 201 Created
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+	"link": "www.mediastore.com/data/@me/album/423423JKHAF98548524",
+	"id": "423423JKHAF98548524",
+	"parent": "6478HDJS3738JSKS",
+	"name": "Test Album"
+	"description": "test description",
+	"createdate": "",
+	"scope": "private",
+	"users": [{
+		"id": "724KJDLLKD98243",
+		"user@example.com"
+	},{
+		"id": "1345HDJDJSKSK34",
+		"test.example.com"
+	}]
 }
 ````
 
@@ -212,9 +340,38 @@ Possible actions:
 DELETE https://[MediaStore hostname]/data/@me/album/:albumID
 ````
 
-Answer:
+Non normative examples:
+
 ````
+DELETE /data/@me/album/834935DJHDWU2374234
+Host: www.mediastore.com
+Accept: application/json
+
+HTTP/1.1 200 OK
+Cache-Control: no-store
+````
+
+````
+DELETE /data/724KJDLLKD98243/album/423423JKHAF98548524
+Host: www.mediastore.com
+Accept: application/json
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
 {
+	"link": "www.mediastore.com/data/@me/album/423423JKHAF98548524",
+	"id": "423423JKHAF98548524",
+	"parent": "6478HDJS3738JSKS",
+	"name": "Test Album"
+	"description": "test description",
+	"createdate": "",
+	"scope": "private",
+	"users": [{
+		"id": "1345HDJDJSKSK34",
+		"test.example.com"
+	}]
 }
 ````
 
@@ -534,7 +691,7 @@ Answer:
 }
 ````
 
-Answer:
+Non normative example:
 
 ````
 {
@@ -567,6 +724,59 @@ Answer:
 
 ````
 {
+	"id": "New ID of user"
+	"name": "User Example",
+	"description": "A description of the user",
+	"openid": "user@example.com",
+	"scope": [
+		"public",
+		"comment",
+		"read",
+		"write",
+		"admin",
+		"superuser"
+	]
+}
+````
+
+Non normative example:
+
+````
+POST /data/user
+Host: www.mediastore.com
+Accept: application/json
+
+{
+	"name": "User Example",
+	"description": "A description of the user",
+	"openid": "user@example.com",
+	"scope": [
+		"public",
+		"comment",
+		"read",
+		"write",
+		"admin",
+		"superuser"
+	]
+}
+
+HTTP/1.1 201 Created
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+	"id": "1743JSHFA3247394"
+	"name": "User Example",
+	"description": "A description of the user",
+	"openid": "user@example.com",
+	"scope": [
+		"public",
+		"comment",
+		"read",
+		"write",
+		"admin",
+		"superuser"
+	]
 }
 ````
 
