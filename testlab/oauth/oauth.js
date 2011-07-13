@@ -1,5 +1,4 @@
 var connect = require('connect'),  
-	MemoryStore = require('connect/middleware/session/memory'),
 	auth = require('connect-auth'),
 	url = require('url'),
 	OAuthDataProvider = require('./in_memory_oauth_data_provider').OAuthDataProvider;
@@ -111,6 +110,25 @@ var authorizationFinishedProvider = function(err, req, res, result) {
 	');
 }
 
+ /**
+  * 
+  * Initialize Oauth options.
+  *
+  * Options:
+  *
+  *   - request_token_url                  'web path for the request token url endpoint, default: /oauth/request_token' (get/post)
+  *   - authorize_url                      'web path for the authorize form, default: /oauth/authorize' (get/post)
+  *   - access_token_url                   'web path for the access token url endpoint, default: /oauth/access_token' (get/post)
+  *
+  *   - authenticate_provider              'function to render a authentication form'
+  *   - authorize_provider                 'function to handle the authorization of the user and application'
+  *   - oauth_provider                     'db instance providing needed authentication mechanisms'
+  *   - authorization_finished_provider    ''
+  *
+  *   - oauth_protocol                     'the protocol (http or https) that this oauth provider is being served from, default: http'
+  *   - realm                              'realm for WWW-Authenticate header, default: realm'
+  *
+  */
 var server = connect.createServer( 
 	connect.bodyDecoder(),
 	auth([

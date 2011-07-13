@@ -72,68 +72,8 @@ OAuthDataProvider.prototype.fetchAuthorizationInformation = function(username, t
 			break;
 		}
 	}
-
+	
 	callback(null, application, request_token);  
-  
-  
-  
-/*  var self = this;
-  
-  // 
-  // Create Serial flow for simplifier feeding chaining the functions
-  //
-  var fetchApplicationAndUser = new simplifier.SerialFlow(
-    function(callback) {
-      self.db.collection('oauth_users_request_tokens', function(err, requestCollection) {
-        requestCollection.findOne({'token':token}, function(err, requestDoc) {
-          callback(err, requestDoc);
-        })
-      });
-    }, 
-    
-    function(err, requestDoc, callback) {
-      // Use the request to fetch the associated user
-      self.db.collection('users', function(err, userCollection) {
-        userCollection.findOne({'username':requestDoc.username}, function(err, userDoc) {
-          callback(err, requestDoc, userDoc);
-        });
-      });      
-    }
-  );
-  
-  // 
-  // Create Serial flow for simplifier feeding chaining the functions
-  //
-  var fetchAllParts = new simplifier.ParallelFlow(
-    // Fetch the application object
-    function(callback) {
-      // locate consumer key by token
-      self.db.collection('oauth_users_request_tokens', function(err, requestCollection) {
-        requestCollection.findOne({'token':token}, function(err, requestDoc) {
-          // Fetch the application
-          self.db.collection('oauth_applications', function(err, applicationCollection) {
-            applicationCollection.findOne({'consumer_key':requestDoc.consumer_key}, function(err, oauthApplicationDoc) {
-              callback(err, oauthApplicationDoc);
-            });
-          });
-        })
-      });
-    },    
-    // Fetches the application and user document
-    fetchApplicationAndUser
-  )
-  
-  //
-  //  Execute all the functions and feed results into final method
-  //  
-  new simplifier.Simplifier().execute(
-    // Execute flow
-    fetchAllParts,    
-    // All results coming back are arrays function1 [err, doc] function2 [err, doc1, doc2]
-    function(oauthApplicationDocResult, userDocResult) {          
-      callback(null, oauthApplicationDocResult[1], userDocResult[1]);
-    }
-  );   */   
 }
 
 /**
@@ -160,13 +100,6 @@ OAuthDataProvider.prototype.tokenByTokenAndVerifier = function(token, verifier, 
 		}
 	}
 	callback(new Error("No token containing token: " + token + " and verifier: " + verifier));
-/*  var self = this;
-  
-  self.db.collection('oauth_users_request_tokens', function(err, collection) {
-    collection.findOne({'token':token, 'verifier':verifier}, function(err, token) {
-      token != null ? callback(err, token) : callback(new Error("No token containing token: " + token + " and verifier: " + verifier), null);
-    })
-  });*/
 }
 
 OAuthDataProvider.prototype.validateNotReplay = function(accessToken, timestamp, nonce, callback) {
@@ -185,13 +118,6 @@ OAuthDataProvider.prototype.userIdByToken = function(token, callback) {
 			return;
 		}
 	}
-/*  var self = this;    
-
-  self.db.collection('oauth_users_request_tokens', function(err, collection) {
-    collection.findOne({'access_token':token}, function(err, tokenEntry) {
-      callback(null, {id:tokenEntry.username});
-    });
-  });  */
 }
 
 OAuthDataProvider.prototype.authenticateUser = function(username, password, oauthToken, callback) {
@@ -208,27 +134,6 @@ OAuthDataProvider.prototype.authenticateUser = function(username, password, oaut
 		}
 	}  
 	callback(new Error("Authentication of user/password failed"), null);
-  
-/*  var self = this;    
-  
-  self.db.collection('users', function(err, collection) {
-    var encodedPassword = MD5.hex_md5(password);
-    collection.findOne({'username':username, 'password':encodedPassword}, function(err, user) {      
-      if(user != null) {
-        // Update the oauthToken document to signal that key is authenticated
-        self.db.collection('oauth_users_request_tokens', function(err, collection) {
-          collection.findOne({'token':oauthToken}, function(err, tokenEntry) {
-            tokenEntry.authenticated = true;
-            collection.save(tokenEntry, function(err, doc) {
-              callback(null, doc);
-            });
-          });
-        });
-      } else {
-        callback(new Error("Authentication of user/password failed"), null);
-      }
-    });
-  });  */
 }
 
 /**
@@ -246,18 +151,6 @@ OAuthDataProvider.prototype.associateTokenToUser = function(username, token, cal
 			}
 		}
 	}
-/*  var self = this;    
-  self.db.collection('users', function(err, collection) {
-    collection.findOne({'username':username}, function(err, user) {
-      // Locate the token
-      self.db.collection('oauth_users_request_tokens', function(err, requestCollection) {
-        requestCollection.findOne({'token': token}, function(err, requestTokenDoc) {
-          requestTokenDoc['username'] = username;
-          requestCollection.save(requestTokenDoc, callback);
-        });
-      });
-    });
-  });*/
 }
 
 /**
