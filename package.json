@@ -9,7 +9,7 @@
 	},
 	"keywords": ["distributed", "apiary", "service", "media", "pictures"],
 	"dependencies": {
-		"connect": "1.5.x",
+		"express": "2.4.x",
 		"formidable": "1.0.x",
 		"connect-auth": "0.2.x",
 		"mysql": "0.9.x"
