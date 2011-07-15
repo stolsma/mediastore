@@ -50,7 +50,7 @@ The following attributes need to be defined in the `appconfig.json` file:
 											// are supported. (mysql is default)
 	"dbhost": "localhost",					// Host of the database. (localhost is default)
 	"dbport": 3306,							// Port number of the database. (3306 is default)
-	"dbdatabase": "mediastore",				// Name of the database to use (mediastore is default)
+	"dbname": "mediastore",					// Name of the database to use (mediastore is default)
 	"dbuser": "aUsername",					// Database user name. (required)
 	"dbpassword": "aPassword",				// Database user password. (required)
 	"owner": "user@example.com"				// OpenID connect Identification of the owner of this MediaStore. (required)
@@ -257,6 +257,7 @@ PUT https://[MediaStore hostname]/data/@me/album/:albumId
 ````
 
 Answer:
+
 ````
 {
 	"link": "...Link to this resource...",
@@ -333,6 +334,7 @@ Cache-Control: no-store
 Authentication scope: `admin`
 
 Possible actions:
+
 1. You can delete a defined album (identified by `:albumID`) + related media item relations.
 2. If @me is a user id then effective `read` permission for that user, for that album will be revoked (i.e. the album will not be accessible for that user anymore).
 
