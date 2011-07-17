@@ -53,7 +53,11 @@ The following attributes need to be defined in the `appconfig.json` file:
 	"dbname": "mediastore",					// Name of the database to use (mediastore is default)
 	"dbuser": "aUsername",					// Database user name. (required)
 	"dbpassword": "aPassword",				// Database user password. (required)
-	"owner": "user@example.com"				// OpenID connect Identification of the owner of this MediaStore. (required)
+	"owner": {								// Service owner object (required)
+		"openid": "user@example.com",		// OpenID connect Identification of the owner of this MediaStore. (required)
+		"name": "",							// Name of the owner (optional)
+		"description": ""					// Owner descriptpion (optional)
+	}	
 }
 ````
 
