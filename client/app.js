@@ -1,47 +1,42 @@
-Ext.application({
-	name: 'MediaStore',
-	launch: function() {
-		Ext.create('Ext.container.Viewport', {
-			layout: 'fit',
-			items: [{
-				title: 'MediaStore Client Application',
-				html : 'Hello! Welcome to the MediaStore client application.'
-			}]
-		});
-		
-		var albumroot = Ext.ModelMgr.getModel('Albumroot');
-		
-		albumroot.load(0, {
-			success: function(root) {
-				console.log("Root data: ", root);
-			}
-		});
-		
-		albumroot.load('shdfgda73483hjfHHH', {
-			success: function(root) {
-				console.log("Root data: ", root);
-			}
-		});
+Ext.Loader.setConfig({enabled: true});
+Ext.Loader.setPath('tolsma.net', './app');
 
-	}
-});
+Ext.require([
+    'tolsma.net.model.Album',
+    'tolsma.net.model.TreeAlbum',
+    'tolsma.net.panel.Test',
+    'tolsma.net.panel.AlbumTree'
+]);
 
-Ext.define('Albumroot', {
-	extend: 'Ext.data.Model',
-	fields: [
-		{ name: 'id', type: 'int' },
-		{ name: 'children', type: 'array' }
-	],
-	proxy: {
-		type: 'rest',
-		url: 'data/@me/album',
-		noCache: false,
-		appendId: true,
-		headers: {
-			authorization: 'OAUTH2 ' + 'dFcTn_2d8_Tt9u0V0gXC'
-		},
-		reader: {
-			type: 'json',
+Ext.onReady(function() {
+    Ext.create('tolsma.net.panel.Test', {
+       renderTo: Ext.getBody(),
+        height: 490,
+        width : 700
+    });
+	
+/*	var albumroot = Ext.ModelMgr.getModel('tolsma.net.model.Album');
+	
+	// test get, response must be 404 not found
+	albumroot.load('shdfgda73483hjfHHH', {
+		success: function(root) {
+			console.log("Root data: ", root);
 		}
-	}
+	});
+
+	// test get of root album, response with list of albums in root
+	albumroot.load(0, {
+		success: function(root) {
+			console.log("Root data: ", root);
+			
+			// and then save it again. PUT, response must be 400 bad request
+			root.save();
+		}
+	});
+	
+	// test POST and create, response must be 201, created
+//	var user = Ext.create('tolsma.net.model.Album', {parent: 0, name: 'Test Album', description: 'This is a test album', scope: 'private'});
+//	user.save(); //POST /users
+
+*/
 });
