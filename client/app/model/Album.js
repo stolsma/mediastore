@@ -16,7 +16,7 @@ Ext.define('tolsma.net.model.Album', {
 		appendId: true,
 		headers: {
 //			authorization: 'OAUTH2 ' + 'dFcTn_2d8_Tt9u0V0gXC'
-			authorization: 'OAUTH2 ' + 'geencode'
+//			authorization: 'OAUTH2 ' + 'geencode'
 		},
 		reader: {
 			type: 'json',
