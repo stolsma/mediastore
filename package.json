@@ -9,10 +9,14 @@
 	},
 	"keywords": ["distributed", "apiary", "service", "media", "pictures"],
 	"dependencies": {
+		"nconf": "0.2.x",
+		"async": "0.1.x",
+		"colors": "0.5.x",
 		"express": "2.4.x",
 		"formidable": "1.0.x",
 		"connect-auth": "0.2.x",
-		"mysql": "0.9.x"
+		"mysql": "0.9.x",
+		"fluent-ffmpeg": "0.0.x"
 	},
 	"main": "./lib/mediastore",
 	"bin": {
